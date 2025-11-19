@@ -26,19 +26,40 @@ class UserFactory extends Factory
         return [
             'name' => fake()->name(),
             'email' => fake()->unique()->safeEmail(),
+            'phone' => fake()->unique()->phoneNumber(),
             'email_verified_at' => now(),
-            'password' => static::$password ??= Hash::make('password'),
+            'password' => static::$password ??= Hash::make(env('DEFAULT_USER_PASSWORD', 'password')),
             'remember_token' => Str::random(10),
         ];
     }
 
     /**
-     * Indicate that the model's email address should be unverified.
+     * Indicate that the role should be that of a owner
      */
-    public function unverified(): static
+    public function owner(): static
     {
         return $this->state(fn (array $attributes) => [
-            'email_verified_at' => null,
+            'role_id' => 2
+        ]);
+    }
+
+    /**
+     * Indicate that the role should be that of a tea picker
+     */
+    public function picker(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'role_id' => 3
+        ]);
+    }
+
+    /**
+     * Indicate that the user is inactive
+     */
+    public function inactive(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'active' => false
         ]);
     }
 }
