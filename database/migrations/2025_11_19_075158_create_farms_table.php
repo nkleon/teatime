@@ -13,6 +13,9 @@ return new class extends Migration
     {
         Schema::create('farms', function (Blueprint $table) {
             $table->id();
+            $table->string('name')->unique();
+            $table->decimal('rate', 12, 2);
+            $table->boolean('active')->default(true);
             $table->timestamps();
         });
     }

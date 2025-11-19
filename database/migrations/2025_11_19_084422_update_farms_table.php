@@ -3,7 +3,6 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use Illuminate\Support\Facades\DB;
 
 return new class extends Migration
 {
@@ -12,11 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('payments', function (Blueprint $table) {
-            $table->id();
-            $table->date('date');
-            $table->decimal('amount', 12, 2);
-            $table->timestamps();
+        Schema::table('farms', function(Blueprint $table){
+            $table->foreignId('owner_id')->constrained('users');
         });
     }
 
@@ -25,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('payments');
+        Schema::table('farms', function(Blueprint $table){
+            $table->dropConstrainedForeignId('owner_id');
+        });
     }
 };
