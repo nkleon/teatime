@@ -21,7 +21,7 @@ class PaymentMethodController extends Controller
      */
     public function create()
     {
-        //
+        return view('create_payment_method');
     }
 
     /**
@@ -29,7 +29,9 @@ class PaymentMethodController extends Controller
      */
     public function store(StorePaymentMethodRequest $request)
     {
-        //
+        PaymentMethod::create($request->validated());
+        return redirect()->route('payment-methods.index')->with('success', 'Payment Method added');
+
     }
 
     /**

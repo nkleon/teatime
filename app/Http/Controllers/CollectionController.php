@@ -21,7 +21,7 @@ class CollectionController extends Controller
      */
     public function create()
     {
-        //
+        return view('create_collection');
     }
 
     /**
@@ -29,7 +29,9 @@ class CollectionController extends Controller
      */
     public function store(StoreCollectionRequest $request)
     {
-        //
+        Collection::create($request->validated());
+        return redirect()->route('collections.index')->with('success', 'Collection added');
+
     }
 
     /**
