@@ -53,7 +53,25 @@ class PaymentController extends Controller
      */
     public function update(UpdatePaymentRequest $request, Payment $payment)
     {
-        //
+        $validatedData = $request->validate([
+        'date' => 'required|date',
+        'amount' => 'required|numeric|min:0.01',
+        
+        // **CRITICAL UNIQUE CHECK**: collection_id should only exist once.
+        'collection_id' => [
+            'required',
+            'exists:collections,id',
+            // Ignore the current payment's ID
+            Rule::unique('payments')->ignore($payment->id),
+        ],
+        
+        'method_id' => 'required|exists:payment_methods,id', // FK check
+    ]);
+
+    $payment->update($validatedData);
+
+    return redirect()->route('payments.index')
+        ->with('success', 'Payment record updated successfully.');
     }
 
     /**
@@ -61,6 +79,10 @@ class PaymentController extends Controller
      */
     public function destroy(Payment $payment)
     {
-        //
+        $payment->delete();
+
+    // Notify the user that the associated collection is now marked as UNPAID.
+    return redirect()->route('payments.index')
+        ->with('warning', 'Payment record successfully DELETED. The associated collection is now unpaid.');
     }
 }

@@ -45,7 +45,7 @@ class RoleController extends Controller
      */
     public function edit(Role $role)
     {
-        //
+        return view('roles.edit', compact('role'));
     }
 
     /**
@@ -53,7 +53,20 @@ class RoleController extends Controller
      */
     public function update(UpdateRoleRequest $request, Role $role)
     {
-        //
+        $validatedData = $request->validate([
+        'name' => [
+            'required',
+            'string',
+            // Ignore the current role's ID when checking for unique name
+            Rule::unique('roles')->ignore($role->id),
+        ],
+        'description' => 'nullable|string',
+    ]);
+
+    $role->update($validatedData);
+
+    return redirect()->route('roles.index')
+        ->with('success', 'Role "' . $role->name . '" updated successfully.');
     }
 
     /**
@@ -61,6 +74,18 @@ class RoleController extends Controller
      */
     public function destroy(Role $role)
     {
-        //
+        // Check for dependent users
+    if ($role->users()->exists()) {
+        return redirect()->back()
+            ->with('error', 'Cannot delete role. It is assigned to existing users.');
+    }
+    
+    // Cannot delete the primary role (e.g., ID 1 for 'Admin')
+    // if ($role->id === 1) { ... } 
+
+    $role->delete();
+
+    return redirect()->route('roles.index')
+        ->with('success', 'Role deleted successfully.');
     }
 }
