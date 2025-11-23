@@ -13,7 +13,8 @@ class PaymentMethodController extends Controller
      */
     public function index()
     {
-        //
+        $paymentMethods = \App\Models\PaymentMethod::paginate(15);
+        return view('payment_methods.index', compact('paymentMethods'));
     }
 
     /**

@@ -21,3 +21,10 @@ Route::resource('collections', CollectionController::class);
 Route::resource('payments', PaymentController::class);
 Route::resource('payment-methods', PaymentMethodController::class);
 
+// Listing routes for all main models
+Route::get('/users', [UserController::class, 'index'])->name('users.index');
+Route::get('/roles', [RoleController::class, 'index'])->name('roles.index');
+Route::get('/farms', [FarmController::class, 'index'])->name('farms.index');
+Route::get('/collections', [CollectionController::class, 'index'])->name('collections.index');
+Route::get('/payments', [PaymentController::class, 'index'])->name('payments.index');
+Route::get('/payment-methods', [PaymentMethodController::class, 'index'])->name('payment_methods.index');

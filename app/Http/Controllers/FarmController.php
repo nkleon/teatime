@@ -13,7 +13,8 @@ class FarmController extends Controller
      */
     public function index()
     {
-        //
+        $farms = \App\Models\Farm::paginate(15);
+        return view('farms.index', compact('farms'));
     }
 
     /**
