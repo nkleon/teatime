@@ -13,7 +13,8 @@ class CollectionController extends Controller
      */
     public function index()
     {
-        //
+        $collections = \App\Models\Collection::paginate(15);
+        return view('collections.index', compact('collections'));
     }
 
     /**
@@ -21,7 +22,7 @@ class CollectionController extends Controller
      */
     public function create()
     {
-        //
+        return view('create_collection');
     }
 
     /**
@@ -29,7 +30,9 @@ class CollectionController extends Controller
      */
     public function store(StoreCollectionRequest $request)
     {
-        //
+        Collection::create($request->validated());
+        return redirect()->route('collections.index')->with('success', 'Collection added');
+
     }
 
     /**

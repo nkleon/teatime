@@ -13,7 +13,8 @@ class FarmController extends Controller
      */
     public function index()
     {
-        //
+        $farms = \App\Models\Farm::paginate(15);
+        return view('farms.index', compact('farms'));
     }
 
     /**
@@ -21,7 +22,7 @@ class FarmController extends Controller
      */
     public function create()
     {
-        //
+        return view('create_farm');
     }
 
     /**
@@ -29,7 +30,9 @@ class FarmController extends Controller
      */
     public function store(StoreFarmRequest $request)
     {
-        //
+        Farm::create($request->validated());
+        return redirect()->route('farms.index')->with('success', 'Farm added');
+
     }
 
     /**
