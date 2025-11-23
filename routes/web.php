@@ -9,9 +9,17 @@ use App\Http\Controllers\CollectionController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\PaymentMethodController;
 
+
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::resource('users', UserController::class);
+Route::resource('roles', RoleController::class);
+Route::resource('farms', FarmController::class);
+Route::resource('collections', CollectionController::class);
+Route::resource('payments', PaymentController::class);
+Route::resource('payment-methods', PaymentMethodController::class);
 
 // Listing routes for all main models
 Route::get('/users', [UserController::class, 'index'])->name('users.index');

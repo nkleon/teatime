@@ -22,7 +22,7 @@ class PaymentController extends Controller
      */
     public function create()
     {
-        //
+        return view('create_payment');
     }
 
     /**
@@ -30,7 +30,9 @@ class PaymentController extends Controller
      */
     public function store(StorePaymentRequest $request)
     {
-        //
+        Payment::create($request->validated());
+        return redirect()->route('payments.index')->with('success', 'Payment added');
+
     }
 
     /**
