@@ -56,7 +56,20 @@ class PaymentMethodController extends Controller
      */
     public function update(UpdatePaymentMethodRequest $request, PaymentMethod $paymentMethod)
     {
-        //
+        $validatedData = $request->validate([
+        'name' => [
+            'required',
+            'string',
+            // Ignore the current method's ID for the unique check
+            Rule::unique('payment_methods')->ignore($paymentMethod->id),
+        ],
+        'description' => 'nullable|string',
+    ]);
+
+    $paymentMethod->update($validatedData);
+
+    return redirect()->route('payment_methods.index')
+        ->with('success', 'Payment Method "' . $paymentMethod->name . '" updated successfully.');
     }
 
     /**
@@ -64,6 +77,15 @@ class PaymentMethodController extends Controller
      */
     public function destroy(PaymentMethod $paymentMethod)
     {
-        //
+        // Check for dependent payments
+    if ($paymentMethod->payments()->exists()) {
+        return redirect()->back()
+            ->with('error', 'Cannot delete payment method. It has been used in existing payments.');
+    }
+
+    $paymentMethod->delete();
+
+    return redirect()->route('payment_methods.index')
+        ->with('success', 'Payment Method deleted successfully.');
     }
 }
