@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreRoleRequest;
 use App\Http\Requests\UpdateRoleRequest;
 use App\Models\Role;
+use Illuminate\Validation\Rule;
 
 class RoleController extends Controller
 {
@@ -22,7 +23,7 @@ class RoleController extends Controller
      */
     public function create()
     {
-        return view('create_role');
+        return view('roles.create');
     }
 
     /**
@@ -32,7 +33,6 @@ class RoleController extends Controller
     {
         Role::create($request->validated());
         return redirect()->route('roles.index')->with('success', 'Role added');
-
     }
 
     /**
@@ -63,7 +63,7 @@ class RoleController extends Controller
             // Ignore the current role's ID when checking for unique name
             Rule::unique('roles')->ignore($role->id),
         ],
-        'description' => 'nullable|string',
+        'description' => 'required|string',
     ]);
 
     $role->update($validatedData);

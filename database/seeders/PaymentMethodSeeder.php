@@ -27,7 +27,7 @@ class PaymentMethodSeeder extends Seeder
 
         $mobile = new PaymentMethod();
         $mobile->name = 'mobile';
-        $mobile->description = "Payment made to tea pickery's mobile money account";
+        $mobile->description = "Payment made to tea picker's mobile money account";
         $mobile->save();
     }
 }

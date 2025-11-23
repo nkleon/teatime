@@ -1,14 +1,14 @@
 @extends('layouts.app')
 
-@section('title', 'Payments')
+@section('title', 'Payment Methods')
 
 @section('content')
 <div class="container">
-    <h1>Payments</h1>
+    <h1>Payment Methods</h1>
 
     <div class="card-tools">
-          <a href="{{ route('payments.create') }}" class="btn btn-primary btn-sm">
-            <i class="bi bi-plus-circle"></i> Add New Payment
+          <a href="{{ route('payment-methods.create') }}" class="btn btn-primary btn-sm">
+            <i class="bi bi-plus-circle"></i> Add New Payment Method
           </a>
     </div>
 
@@ -17,42 +17,38 @@
         <thead>
             <tr>
                 <th>ID</th>
-                <th>Date</th>
-                <th>Collection</th>
-                <th>Amount</th>
-                <th>Method</th>
+                <th>Name</th>
+                <th>Description</th>
                 <th>Actions</th>
             </tr>
         </thead>
         <tbody>
-        @foreach ($payments as $payment)
+        @foreach ($paymentMethods as $paymentMethod)
             <tr>
-                <td>{{ $payment->id }}</td>
-                <td>{{ $payment->date }}</td>
-                <td>{{ $payment->collection->date }} - {{ $payment->collection->picker->name }} - {{ $payment->collection->farm->name }}</td>
-                <td>{{ $payment->amount }}</td>
-                <td>{{ $payment->payment_method->name }}</td>
+                <td>{{ $paymentMethod->id }}</td>
+                <td>{{ $paymentMethod->name }}</td>
+                <td>{{ $paymentMethod->description }}</td>
                 <td>
                   <div class="btn-group" role="group">
-                    {{--@can('show', $payment)--}}
-                      <a href="{{ route('payments.show', $payment->id) }}" 
+                    {{--@can('show', $paymentMethod)--}}
+                      <a href="{{ route('payment-methods.show', $paymentMethod->id) }}" 
                        class="btn btn-info btn-sm" 
                        title="View">
                       <i class="bi bi-eye"></i>
                     </a>
                     {{--@endcan
-                    @can('update', $payment)--}}
-                      <a href="{{ route('payments.edit', $payment->id) }}" 
+                    @can('update', $role)--}}
+                      <a href="{{ route('payment-methods.edit', $paymentMethod->id) }}" 
                        class="btn btn-warning btn-sm" 
                        title="Edit">
                       <i class="bi bi-pencil"></i>
                     </a>
                     {{--@endcan
-                    @can('delete', $payment)--}}
-                    <form action="{{ route('payments.destroy', $payment->id) }}" 
+                    @can('delete', $role)--}}
+                    <form action="{{ route('payment-methods.destroy', $paymentMethod->id) }}" 
                             method="POST" 
                             class="d-inline"
-                            onsubmit="return confirm('Are you sure you want to delete this payment?');">
+                            onsubmit="return confirm('Are you sure you want to delete this payment method?');">
                         @csrf
                         @method('DELETE')
                         <button type="submit" class="btn btn-danger btn-sm" title="Delete">
@@ -66,7 +62,7 @@
         @endforeach
         </tbody>
     </table>
-    </div>
-    {{ $payments->links('pagination::bootstrap-5') }}
+    </div>    
+    {{ $paymentMethods->links('pagination::bootstrap-5') }}
 </div>
 @endsection

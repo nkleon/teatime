@@ -22,7 +22,9 @@ class StorePaymentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|max:255|unique:farms,name'
+            'date' => 'required|date',
+            'method_id' => 'required|exists:payment_methods,id',
+            'collection_id' => 'required|exists:collections,id',
         ];
     }
 }

@@ -23,7 +23,8 @@ class StoreFarmRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:255|unique:farms,name',
-
+            'owner_id' => 'required|exists:users,id',
+            'rate' => 'required|numeric|min:0.01',
         ];
     }
 }

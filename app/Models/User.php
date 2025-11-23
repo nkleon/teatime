@@ -24,7 +24,8 @@ class User extends Authenticatable
         'phone',
         'email',
         'password',
-        'role_id'
+        'role_id',
+        'active'
     ];
 
     /**
@@ -57,11 +58,11 @@ class User extends Authenticatable
 
     public function farms() : HasMany
     {
-        return $this->hasMany(Farm::class);
+        return $this->hasMany(Farm::class, 'owner_id');
     }
 
     public function collections() : HasMany
     {
-        return $this->hasMany(Collection::class);
+        return $this->hasMany(Collection::class, 'picker_id');
     }
 }

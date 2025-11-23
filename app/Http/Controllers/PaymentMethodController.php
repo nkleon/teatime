@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StorePaymentMethodRequest;
 use App\Http\Requests\UpdatePaymentMethodRequest;
 use App\Models\PaymentMethod;
+use Illuminate\Validation\Rule;
 
 class PaymentMethodController extends Controller
 {
@@ -13,8 +14,8 @@ class PaymentMethodController extends Controller
      */
     public function index()
     {
-        $paymentMethods = \App\Models\PaymentMethod::paginate(15);
-        return view('payment_methods.index', compact('paymentMethods'));
+        $paymentMethods = PaymentMethod::paginate(15);
+        return view('payment-methods.index', compact('paymentMethods'));
     }
 
     /**
@@ -22,7 +23,7 @@ class PaymentMethodController extends Controller
      */
     public function create()
     {
-        return view('create_payment_method');
+        return view('payment-methods.create');
     }
 
     /**
@@ -32,7 +33,6 @@ class PaymentMethodController extends Controller
     {
         PaymentMethod::create($request->validated());
         return redirect()->route('payment-methods.index')->with('success', 'Payment Method added');
-
     }
 
     /**
@@ -48,7 +48,7 @@ class PaymentMethodController extends Controller
      */
     public function edit(PaymentMethod $paymentMethod)
     {
-        //
+        return view('payment-methods.edit', compact('paymentMethod'));
     }
 
     /**
@@ -63,12 +63,12 @@ class PaymentMethodController extends Controller
             // Ignore the current method's ID for the unique check
             Rule::unique('payment_methods')->ignore($paymentMethod->id),
         ],
-        'description' => 'nullable|string',
+        'description' => 'required|string',
     ]);
 
     $paymentMethod->update($validatedData);
 
-    return redirect()->route('payment_methods.index')
+    return redirect()->route('payment-methods.index')
         ->with('success', 'Payment Method "' . $paymentMethod->name . '" updated successfully.');
     }
 
@@ -85,7 +85,7 @@ class PaymentMethodController extends Controller
 
     $paymentMethod->delete();
 
-    return redirect()->route('payment_methods.index')
+    return redirect()->route('payment-methods.index')
         ->with('success', 'Payment Method deleted successfully.');
     }
 }

@@ -15,7 +15,8 @@ class Farm extends Model
     protected $fillable = [
         'name',
         'owner_id',
-        'rate'
+        'rate',
+        'active'
     ];
 
     public function owner() : BelongsTo

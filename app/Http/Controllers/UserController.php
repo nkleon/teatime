@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use App\Models\User;
+use App\Models\Role;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
 
 class UserController extends Controller
 {
@@ -22,7 +25,8 @@ class UserController extends Controller
      */
     public function create()
     {
-        return view('create_user');
+        $roles = Role::all();
+        return view('users.create', compact('roles'));
     }
 
     /**
@@ -30,9 +34,10 @@ class UserController extends Controller
      */
     public function store(StoreUserRequest $request)
     {
-        User::create($request->validated());
+        $validated = $request->validated();
+        $validated['password'] = Hash::make(env('DEFAULT_USER_PASSWORD', 'password'));
+        User::create($validated);
         return redirect()->route('users.index')->with('success', 'User added!');
-
     }
 
     /**
@@ -94,7 +99,7 @@ class UserController extends Controller
     ]);
 
     // Handle 'active' boolean for unchecked checkbox
-    $validatedData['active'] = $request->has('active');
+    $validatedData['active'] = $request->has('active') ? 1 : 0;
 
     // 2. Handle Password Update
     if (!empty($validatedData['password'])) {

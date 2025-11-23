@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreCollectionRequest;
 use App\Http\Requests\UpdateCollectionRequest;
 use App\Models\Collection;
+use App\Models\Farm;
+use App\Models\Role;
+use App\Models\User;
 
 class CollectionController extends Controller
 {
@@ -13,7 +16,7 @@ class CollectionController extends Controller
      */
     public function index()
     {
-        $collections = \App\Models\Collection::paginate(15);
+        $collections = Collection::with(['farm', 'picker'])->paginate(15);
         return view('collections.index', compact('collections'));
     }
 
@@ -22,7 +25,9 @@ class CollectionController extends Controller
      */
     public function create()
     {
-        return view('create_collection');
+        $farms = Farm::where('active', true)->get();
+        $pickers = User::where(['role_id' => 3, 'active' => true])->get();
+        return view('collections.create', compact('farms', 'pickers'));
     }
 
     /**
@@ -49,7 +54,7 @@ class CollectionController extends Controller
     public function edit(Collection $collection)
     {
         // Load active farms and all users (pickers) for the dropdowns
-    $farms = Farm::where('active', true)->get();
+    $farms = Farm::all();
     $pickers = User::all(); 
 
     // Authorization check (e.g., must be admin or the original picker)

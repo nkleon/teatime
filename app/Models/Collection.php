@@ -19,13 +19,18 @@ class Collection extends Model
         'quantity'
     ];
 
-    public function user() : BelongsTo
+    public function picker() : BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'picker_id');
     }
 
-    public function payments() : HasOne
+    public function payment() : HasOne
     {
         return $this->hasOne(Payment::class);
+    }
+
+    public function farm() : BelongsTo
+    {
+        return $this->belongsTo(Farm::class);
     }
 }

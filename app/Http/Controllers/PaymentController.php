@@ -4,7 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StorePaymentRequest;
 use App\Http\Requests\UpdatePaymentRequest;
+use App\Models\Collection;
+use App\Models\Farm;
 use App\Models\Payment;
+use App\Models\PaymentMethod;
+use Illuminate\Validation\Rule;
 
 class PaymentController extends Controller
 {
@@ -13,7 +17,7 @@ class PaymentController extends Controller
      */
     public function index()
     {
-        $payments = \App\Models\Payment::paginate(15);
+        $payments = Payment::paginate(15);
         return view('payments.index', compact('payments'));
     }
 
@@ -22,7 +26,9 @@ class PaymentController extends Controller
      */
     public function create()
     {
-        return view('create_payment');
+        $collections = Collection::doesntHave('payment')->get();
+        $payment_methods = PaymentMethod::all();
+        return view('payments.create', compact('collections', 'payment_methods'));
     }
 
     /**
@@ -30,7 +36,12 @@ class PaymentController extends Controller
      */
     public function store(StorePaymentRequest $request)
     {
-        Payment::create($request->validated());
+        $validated = $request->validated();
+        $collection = Collection::findOrFail($validated['collection_id']);
+        $farm = Farm::findOrFail($collection->farm_id);
+        $validated['amount'] = $farm->rate * $collection->quantity;
+        // dd($validated);
+        Payment::create($validated);
         return redirect()->route('payments.index')->with('success', 'Payment added');
 
     }
@@ -48,7 +59,9 @@ class PaymentController extends Controller
      */
     public function edit(Payment $payment)
     {
-        //
+        $collections = Collection::has('payment')->get();
+        $payment_methods = PaymentMethod::all();
+        return view('payments.edit', compact('payment', 'collections', 'payment_methods'));
     }
 
     /**

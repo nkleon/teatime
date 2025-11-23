@@ -35,7 +35,7 @@ class DatabaseSeeder extends Seeder
         User::factory(40)->picker()->create();
         User::factory(10)->picker()->inactive()->create();
 
-        Farm::factory(5)->create();
+        Farm::factory(6)->create();
 
         Collection::factory(100)->create();
 

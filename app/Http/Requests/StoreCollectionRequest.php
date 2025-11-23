@@ -22,7 +22,10 @@ class StoreCollectionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|max:255|unique:farms,name',
+            'quantity' => 'required|numeric|min:0.01',
+            'date' => 'required',
+            'farm_id' => 'required|exists:farms,id',
+            'picker_id' => 'required|exists:users,id'
             // Add other fields as needed
         ];
     }

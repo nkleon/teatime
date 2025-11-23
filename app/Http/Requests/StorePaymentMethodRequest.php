@@ -22,7 +22,8 @@ class StorePaymentMethodRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|max:255|unique:farms,name'
+            'name' => 'required|string|max:255|unique:farms,name',
+            'description' => 'required|string',
         ];
     }
 }

@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreFarmRequest;
 use App\Http\Requests\UpdateFarmRequest;
 use App\Models\Farm;
+use App\Models\Role;
+use App\Models\User;
+use Illuminate\Validation\Rule;
 
 class FarmController extends Controller
 {
@@ -13,7 +16,7 @@ class FarmController extends Controller
      */
     public function index()
     {
-        $farms = \App\Models\Farm::paginate(15);
+        $farms = Farm::paginate(15);
         return view('farms.index', compact('farms'));
     }
 
@@ -22,7 +25,9 @@ class FarmController extends Controller
      */
     public function create()
     {
-        return view('create_farm');
+        // $ownerRoleId = Role::where('name', 'owner')->value('id');
+        $owners = User::where('role_id', 2)->get();
+        return view('farms.create', compact('owners'));
     }
 
     /**
@@ -32,7 +37,6 @@ class FarmController extends Controller
     {
         Farm::create($request->validated());
         return redirect()->route('farms.index')->with('success', 'Farm added');
-
     }
 
     /**
@@ -48,7 +52,9 @@ class FarmController extends Controller
      */
     public function edit(Farm $farm)
     {
-        return view('farms.edit', compact('farm'));
+        $ownerRoleId = Role::where('name', 'owner')->value('id');
+        $owners = User::where('role_id', $ownerRoleId)->get();
+        return view('farms.edit', compact('farm', 'owners'));
     }
 
     /**
@@ -68,11 +74,12 @@ class FarmController extends Controller
         'rate' => 'required|numeric|min:0.01',
         // Validate 'active' as a boolean (if present, must be '1' or '0')
         'active' => 'nullable|boolean', 
+        'owner_id' => 'required|exists:users,id'
     ]);
 
     // Handle 'active' for unchecked checkbox (if 'active' is not in request, set it to false)
     $validatedData['active'] = $request->has('active');
-
+    //dd($validatedData, $request->all());
     // 2. Update the Record
     $farm->update($validatedData);
 
