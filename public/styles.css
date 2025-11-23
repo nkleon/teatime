@@ -1,0 +1,188 @@
+:root {
+    /* Agricultural theme colors */
+    --primary-bg: #3C6E47;
+    --primary-text: #FFFFFF;
+
+    --secondary-bg: #F2E8C9;
+    --secondary-text: #2F2F2F;
+
+    --accent: #A67B5B;
+}
+
+html,
+body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+/* Paragraph spacing */
+p {
+    margin-bottom: 1rem;
+}
+
+/* Headings */
+h1, h2, h3, h4, h5, h6 {
+    margin-top: 1.5rem;
+    margin-bottom: 0.75rem;
+    font-weight: 600;
+    color: var(--primary-bg); /* makes headings stand out */
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    font-family: "Inter", Arial, sans-serif;
+    background: var(--secondary-bg);
+    color: var(--secondary-text);
+    line-height: 1.6; /* improves readability */
+    font-size: 1rem;  /* base font size */
+}
+
+.text-content {
+    max-width: 800px; /* keeps text line length comfortable */
+    margin: 0 auto;   /* centers content */
+    padding: 1rem 1.5rem;
+}
+
+/* Links inside text */
+.text-content a {
+    color: var(--primary-bg);
+    text-decoration: underline;
+}
+
+.text-content a:hover {
+    text-decoration: none;
+}
+
+/* Lists */
+.text-content ul, .text-content ol {
+    margin-bottom: 1rem;
+    padding-left: 1.5rem;
+}
+
+/* Blockquotes */
+.text-content blockquote {
+    border-left: 4px solid var(--accent);
+    padding-left: 1rem;
+    margin-left: 0;
+    font-style: italic;
+    color: #4b4b4b;
+    background: #f9f5e9; /* light agricultural tone */
+}
+
+/* NAVBAR */
+nav {
+    background: var(--primary-bg);
+    color: var(--primary-text);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    flex-wrap: wrap;
+}
+
+nav .logo {
+    font-size: 1.4rem;
+    font-weight: bold;
+}
+
+nav ul {
+    list-style: none;
+    display: flex;
+    gap: 1.2rem;
+    padding: 0;
+    margin: 0;
+    flex-wrap: wrap;
+}
+
+nav ul li a {
+    color: var(--primary-text);
+    text-decoration: none;
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+nav ul li a:hover {
+    text-decoration: underline;
+}
+
+/* MAIN CONTENT */
+main.content {
+    flex: 1;
+    padding: 2rem;
+}
+
+/* ===========================
+    TABLE STYLING
+============================ */
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 2rem;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+table thead {
+    background: var(--primary-bg);
+    color: var(--primary-text);
+}
+
+table th,
+table td {
+    padding: 0.85rem 1rem;
+    text-align: left;
+    border-bottom: 1px solid #d8d8d8;
+}
+
+table tbody tr:nth-child(even) {
+    background: #f9f5e9;
+    /* light agricultural tone */
+}
+
+table tbody tr:hover {
+    background: #e8e0c9;
+    /* slightly darker wheat shade */
+}
+
+table th {
+    font-weight: 600;
+}
+
+/* Make table scrollable on small screens */
+.table-responsive {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* FOOTER */
+footer {
+    background: var(--primary-bg);
+    color: var(--primary-text);
+    padding: 1.5rem;
+    text-align: center;
+}
+
+footer a {
+    color: var(--primary-text);
+    text-decoration: underline;
+}
+
+/* RESPONSIVE NAV */
+@media (max-width: 768px) {
+    nav {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    nav ul {
+        justify-content: center;
+        margin-top: 1rem;
+    }
+}

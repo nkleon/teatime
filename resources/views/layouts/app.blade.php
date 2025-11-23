@@ -5,186 +5,91 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'Home') - {{ env('APP_NAME') }}</title>
+
+    <!-- Stylesheets and scripts for BootStrap -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
+    <!-- Stylesheets and scripts for select2 -->
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-
-    <!-- JS -->
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-    <style>
-        :root {
-            /* Agricultural theme colors */
-            --primary-bg: #3C6E47;
-            --primary-text: #FFFFFF;
 
-            --secondary-bg: #F2E8C9;
-            --secondary-text: #2F2F2F;
-
-            --accent: #A67B5B;
-        }
-
-        html,
-        body {
-            height: 100%;
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
-            display: flex;
-            flex-direction: column;
-            font-family: "Inter", Arial, sans-serif;
-            background: var(--secondary-bg);
-            color: var(--secondary-text);
-        }
-
-        /* NAVBAR */
-        nav {
-            background: var(--primary-bg);
-            color: var(--primary-text);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1rem 1.5rem;
-            flex-wrap: wrap;
-        }
-
-        nav .logo {
-            font-size: 1.4rem;
-            font-weight: bold;
-        }
-
-        nav ul {
-            list-style: none;
-            display: flex;
-            gap: 1.2rem;
-            padding: 0;
-            margin: 0;
-            flex-wrap: wrap;
-        }
-
-        nav ul li a {
-            color: var(--primary-text);
-            text-decoration: none;
-            font-size: 1rem;
-            font-weight: 500;
-        }
-
-        nav ul li a:hover {
-            text-decoration: underline;
-        }
-
-        /* MAIN CONTENT */
-        main.content {
-            flex: 1;
-            padding: 2rem;
-        }
-
-        /* ===========================
-           TABLE STYLING
-        ============================ */
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            background: #fff;
-            border-radius: 8px;
-            overflow: hidden;
-            margin-bottom: 2rem;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
-
-        table thead {
-            background: var(--primary-bg);
-            color: var(--primary-text);
-        }
-
-        table th,
-        table td {
-            padding: 0.85rem 1rem;
-            text-align: left;
-            border-bottom: 1px solid #d8d8d8;
-        }
-
-        table tbody tr:nth-child(even) {
-            background: #f9f5e9;
-            /* light agricultural tone */
-        }
-
-        table tbody tr:hover {
-            background: #e8e0c9;
-            /* slightly darker wheat shade */
-        }
-
-        table th {
-            font-weight: 600;
-        }
-
-        /* Make table scrollable on small screens */
-        .table-responsive {
-            width: 100%;
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-        }
-
-        /* FOOTER */
-        footer {
-            background: var(--primary-bg);
-            color: var(--primary-text);
-            padding: 1.5rem;
-            text-align: center;
-        }
-
-        footer a {
-            color: var(--primary-text);
-            text-decoration: underline;
-        }
-
-        /* RESPONSIVE NAV */
-        @media (max-width: 768px) {
-            nav {
-                flex-direction: column;
-                align-items: center;
-                text-align: center;
-            }
-
-            nav ul {
-                justify-content: center;
-                margin-top: 1rem;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="{{ asset('styles.css') }}">
+    
 </head>
 
 <body>
 
     <!-- NAVIGATION BAR -->
-    <nav>
-        <div class="logo-container" style="display: flex; align-items: center; gap: 0.75rem;">
-            <!-- Logo -->
+    <nav class="navbar navbar-expand-lg" style="background: var(--primary-bg); color: var(--primary-text); padding: 0.75rem 1.5rem;">
+    <div class="container-fluid" style="display: flex; justify-content: space-between; align-items: center;">
+
+        <!-- Logo + App Name -->
+        <div class="logo-container d-flex align-items-center gap-2">
             <a href="{{ url('/') }}">
                 <img src="{{ asset('logo.png') }}" alt="{{ env('APP_NAME') }} Logo"
-                    style="width: 40px; height: 40px; object-fit: contain;">
+                     style="width: 40px; height: 40px; object-fit: contain;">
             </a>
-            <!-- App Name -->
-            <a href="{{ url('/') }}"
-                style="color: inherit; text-decoration: none; font-weight: bold; font-size: 1.4rem;">
+            <a href="{{ url('/') }}" style="color: inherit; text-decoration: none; font-weight: bold; font-size: 1.4rem;">
                 {{ env('APP_NAME') }}
             </a>
         </div>
 
-        <ul>
-            <li><a href="{{ route('roles.index') }}">Roles</a></li>
-            <li><a href="{{ route('users.index') }}">Users</a></li>
-            <li><a href="{{ route('farms.index') }}">Farms</a></li>
-            <li><a href="{{ route('payment-methods.index') }}">Payment Methods</a></li>
-            <li><a href="{{ route('collections.index') }}">Collections</a></li>
-            <li><a href="{{ route('payments.index') }}">Payments</a></li>
-        </ul>
-    </nav>
+        <!-- Links + User Dropdown -->
+        <div class="d-flex align-items-center gap-3">
+
+            <!-- Navbar links -->
+            <ul class="navbar-nav flex-row gap-3 mb-0">
+                @can('viewAny', App\Models\Role::class)
+                    <li class="nav-item"><a class="nav-link text-white" href="{{ route('roles.index') }}">Roles</a></li>
+                @endcan
+                @can('viewAny', App\Models\User::class)
+                    <li class="nav-item"><a class="nav-link text-white" href="{{ route('users.index') }}">Users</a></li>
+                @endcan
+                @can('viewAny', App\Models\Farm::class)
+                    <li class="nav-item"><a class="nav-link text-white" href="{{ route('farms.index') }}">Farms</a></li>
+                @endcan
+                @can('viewAny', App\Models\PaymentMethod::class)
+                    <li class="nav-item"><a class="nav-link text-white" href="{{ route('payment-methods.index') }}">Payment Methods</a></li>
+                @endcan
+                @can('viewAny', App\Models\Collection::class)
+                    <li class="nav-item"><a class="nav-link text-white" href="{{ route('collections.index') }}">Collections</a></li>
+                @endcan
+                @can('viewAny', App\Models\Payment::class)
+                    <li class="nav-item"><a class="nav-link text-white" href="{{ route('payments.index') }}">Payments</a></li>
+                @endcan
+            </ul>
+
+            <!-- User Dropdown -->
+            <div class="dropdown">
+                <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" 
+                   id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <img src="{{ Auth::check() && Auth::user()->profile_picture ? asset(Auth::user()->profile_picture) : asset('user.png') }}" 
+                         alt="Profile" width="32" height="32" class="rounded-circle me-2">
+                    <span>{{ Auth::check() ? Auth::user()->name : 'Guest' }}</span>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                    @if(Auth::check())
+                        <li><a class="dropdown-item" href="{{ route('profile.index') }}">Profile</a></li>
+                        <li>
+                            <form method="POST" action="{{ route('logout') }}">
+                                @csrf
+                                <button class="dropdown-item" type="submit">Logout</button>
+                            </form>
+                        </li>
+                    @else
+                        <li><a class="dropdown-item" href="{{ route('login') }}">Login</a></li>
+                        <li><a class="dropdown-item" href="{{ route('register') }}">Register</a></li>
+                    @endif
+                </ul>
+            </div>
+
+        </div>
+    </div>
+</nav>
 
     <!-- MAIN CONTENT -->
     <main class="content">
@@ -212,7 +117,7 @@
         <div>
             &copy; {{ date('Y') }} {{ env('APP_NAME') }} — All Rights Reserved.
             &nbsp;|&nbsp;
-            <a href="{{-- route('about') --}}#">About Us</a>
+            <a href="{{ route('about') }}">About Us</a>
         </div>
     </footer>
 

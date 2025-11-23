@@ -6,7 +6,7 @@
 <div class="container">
     <h1>Farms</h1>
 
-    <div class="card-tools">
+    <div class="card-tools mb-4">
           <a href="{{ route('farms.create') }}" class="btn btn-primary btn-sm">
             <i class="bi bi-plus-circle"></i> Add New Farm
           </a>
@@ -21,6 +21,7 @@
                     <th>Owner</th>
                     <th>Rate</th>
                     <th>Active</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody>

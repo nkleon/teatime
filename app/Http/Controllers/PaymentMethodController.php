@@ -5,15 +5,18 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StorePaymentMethodRequest;
 use App\Http\Requests\UpdatePaymentMethodRequest;
 use App\Models\PaymentMethod;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Validation\Rule;
 
 class PaymentMethodController extends Controller
 {
+    use AuthorizesRequests;
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
+        $this->authorize('viewAny', PaymentMethod::class);
         $paymentMethods = PaymentMethod::paginate(15);
         return view('payment-methods.index', compact('paymentMethods'));
     }
@@ -23,6 +26,7 @@ class PaymentMethodController extends Controller
      */
     public function create()
     {
+        $this->authorize('create', PaymentMethod::class);
         return view('payment-methods.create');
     }
 
@@ -31,6 +35,7 @@ class PaymentMethodController extends Controller
      */
     public function store(StorePaymentMethodRequest $request)
     {
+        $this->authorize('create', PaymentMethod::class);
         PaymentMethod::create($request->validated());
         return redirect()->route('payment-methods.index')->with('success', 'Payment Method added');
     }
@@ -48,6 +53,7 @@ class PaymentMethodController extends Controller
      */
     public function edit(PaymentMethod $paymentMethod)
     {
+        $this->authorize('update', $paymentMethod);
         return view('payment-methods.edit', compact('paymentMethod'));
     }
 
@@ -56,6 +62,7 @@ class PaymentMethodController extends Controller
      */
     public function update(UpdatePaymentMethodRequest $request, PaymentMethod $paymentMethod)
     {
+        $this->authorize('update', $paymentMethod);
         $validatedData = $request->validate([
         'name' => [
             'required',
@@ -77,6 +84,7 @@ class PaymentMethodController extends Controller
      */
     public function destroy(PaymentMethod $paymentMethod)
     {
+        $this->authorize('delete', $paymentMethod);
         // Check for dependent payments
     if ($paymentMethod->payments()->exists()) {
         return redirect()->back()

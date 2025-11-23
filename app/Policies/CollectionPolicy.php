@@ -13,7 +13,7 @@ class CollectionPolicy
      */
     public function viewAny(User $user): bool
     {
-        return false;
+        return $user != null;
     }
 
     /**
@@ -21,7 +21,7 @@ class CollectionPolicy
      */
     public function view(User $user, Collection $collection): bool
     {
-        return false;
+        return $user != null;
     }
 
     /**
@@ -29,7 +29,7 @@ class CollectionPolicy
      */
     public function create(User $user): bool
     {
-        return false;
+        return $user != null && $user->role_id !== 3;
     }
 
     /**
@@ -37,7 +37,7 @@ class CollectionPolicy
      */
     public function update(User $user, Collection $collection): bool
     {
-        return false;
+        return $user != null && $user->role_id !== 3;
     }
 
     /**
@@ -45,7 +45,7 @@ class CollectionPolicy
      */
     public function delete(User $user, Collection $collection): bool
     {
-        return false;
+        return $user != null && $user->role_id !== 3;
     }
 
     /**

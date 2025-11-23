@@ -8,15 +8,30 @@ use App\Models\Collection;
 use App\Models\Farm;
 use App\Models\Role;
 use App\Models\User;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class CollectionController extends Controller
 {
+    use AuthorizesRequests;
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $collections = Collection::with(['farm', 'picker'])->paginate(15);
+        $this->authorize('viewAny', Collection::class);
+        $user = auth()->user();
+        if($user->role_id == 1) {
+            $collections = Collection::with(['farm', 'picker'])->paginate(15);
+        } else if ($user->role_id == 3) {
+            $collections = Collection::where('picker_id', $user->id)->with(['farm', 'picker'])->paginate(15);
+        } else if ($user->role_id == 2) {
+            $collections = Collection::whereHas('farm', function ($query) use ($user) {
+                $query->where('owner_id', $user->id);
+            })
+            ->with(['farm', 'picker'])
+            ->paginate(15);
+        }
+        // $collections = Collection::with(['farm', 'picker'])->paginate(15);
         return view('collections.index', compact('collections'));
     }
 
@@ -25,7 +40,17 @@ class CollectionController extends Controller
      */
     public function create()
     {
-        $farms = Farm::where('active', true)->get();
+        $this->authorize('create', Collection::class);
+        $user = auth()->user();
+        if($user->role_id == 1)
+        {
+            $farms = Farm::where('active', true)->get();
+        } 
+        else if ($user->role_id == 2)
+        {
+            $farms = Farm::where(['active' => true, 'owner_id' => $user->id])->get();
+        }
+        // $farms = Farm::where('active', true)->get();
         $pickers = User::where(['role_id' => 3, 'active' => true])->get();
         return view('collections.create', compact('farms', 'pickers'));
     }
@@ -35,6 +60,7 @@ class CollectionController extends Controller
      */
     public function store(StoreCollectionRequest $request)
     {
+        $this->authorize('create', Collection::class);
         Collection::create($request->validated());
         return redirect()->route('collections.index')->with('success', 'Collection added');
 
@@ -53,14 +79,26 @@ class CollectionController extends Controller
      */
     public function edit(Collection $collection)
     {
+        $this->authorize('update', $collection);
+        $user = auth()->user();
+        if($user->role_id == 1)
+        {
+            $farms = Farm::all();
+        } 
+        else if ($user->role_id == 2)
+        {
+            $farms = Farm::where('owner_id', $user->id)->get();
+        }
+
+
         // Load active farms and all users (pickers) for the dropdowns
-    $farms = Farm::all();
-    $pickers = User::all(); 
+        // $farms = Farm::all();
+        $pickers = User::all(); 
 
-    // Authorization check (e.g., must be admin or the original picker)
-    // $this->authorize('update', $collection); 
+        // Authorization check (e.g., must be admin or the original picker)
+        // $this->authorize('update', $collection); 
 
-    return view('collections.edit', compact('collection', 'farms', 'pickers'));
+        return view('collections.edit', compact('collection', 'farms', 'pickers'));
     }
 
     /**
@@ -68,6 +106,7 @@ class CollectionController extends Controller
      */
     public function update(UpdateCollectionRequest $request, Collection $collection)
     {
+        $this->authorize('update', $collection);
         // 1. Validation Logic
     $validatedData = $request->validate([
         'date' => 'required|date',
@@ -93,6 +132,7 @@ class CollectionController extends Controller
      */
     public function destroy(Collection $collection)
     {
+        $this->authorize('delete', $collection);
         // Authorization check
     // $this->authorize('delete', $collection); 
     

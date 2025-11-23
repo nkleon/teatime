@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Collection;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreCollectionRequest extends FormRequest
@@ -11,7 +12,7 @@ class StoreCollectionRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        return auth()->user()->can('create', Collection::class);
     }
 
     /**

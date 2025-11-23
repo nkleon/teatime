@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Models\PaymentMethod;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StorePaymentMethodRequest extends FormRequest
@@ -11,7 +12,7 @@ class StorePaymentMethodRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        return auth()->user()->can('create', PaymentMethod::class);
     }
 
     /**

@@ -5,15 +5,18 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreRoleRequest;
 use App\Http\Requests\UpdateRoleRequest;
 use App\Models\Role;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Validation\Rule;
 
 class RoleController extends Controller
 {
+    use AuthorizesRequests;
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
+        $this->authorize('viewAny', Role::class);
         $roles = \App\Models\Role::paginate(15);
         return view('roles.index', compact('roles'));
     }
@@ -23,6 +26,7 @@ class RoleController extends Controller
      */
     public function create()
     {
+        $this->authorize('create', Role::class);
         return view('roles.create');
     }
 
@@ -31,6 +35,7 @@ class RoleController extends Controller
      */
     public function store(StoreRoleRequest $request)
     {
+        $this->authorize('create', Role::class);
         Role::create($request->validated());
         return redirect()->route('roles.index')->with('success', 'Role added');
     }
@@ -48,6 +53,7 @@ class RoleController extends Controller
      */
     public function edit(Role $role)
     {
+        $this->authorize('update', $role);
         return view('roles.edit', compact('role'));
     }
 
@@ -56,6 +62,7 @@ class RoleController extends Controller
      */
     public function update(UpdateRoleRequest $request, Role $role)
     {
+        $this->authorize('update', $role);
         $validatedData = $request->validate([
         'name' => [
             'required',
@@ -77,6 +84,7 @@ class RoleController extends Controller
      */
     public function destroy(Role $role)
     {
+        $this->authorize('delete', $role);
         // Check for dependent users
     if ($role->users()->exists()) {
         return redirect()->back()

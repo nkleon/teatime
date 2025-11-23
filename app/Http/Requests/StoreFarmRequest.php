@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Farm;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreFarmRequest extends FormRequest
@@ -11,7 +12,7 @@ class StoreFarmRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        return auth()->user()->can('create', Farm::class);
     }
 
     /**

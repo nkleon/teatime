@@ -53,10 +53,10 @@
                 @enderror
             </div>
 
-            <div class="form-check">
+            <div class="mb-3">
                 <input type="checkbox" id="active" name="active" value="1"
                     {{ old('active', $user->active) == 1 ? 'checked' : '' }} class="form-check-input">
-                <label for="active" class="form-check-label">User is Active</label>
+                <label for="active" class="form-check-label">Active</label>
                 @error('active')
                     <div>{{ $message }}</div>
                 @enderror

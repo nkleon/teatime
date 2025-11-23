@@ -8,16 +8,40 @@ use App\Models\Collection;
 use App\Models\Farm;
 use App\Models\Payment;
 use App\Models\PaymentMethod;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Validation\Rule;
 
 class PaymentController extends Controller
 {
+    use AuthorizesRequests;
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $payments = Payment::paginate(15);
+        $this->authorize('viewAny', Payment::class);
+        $user = auth()->user();
+        if ($user->role_id == 1) {
+            // Admin sees all collections
+            $collections = Collection::pluck('id')->toArray();
+        } elseif ($user->role_id == 3) {
+            // Picker: collections assigned to them
+            $collections = Collection::where('picker_id', $user->id)->pluck('id')->toArray();
+        } elseif ($user->role_id == 2) {
+            // Owner: collections on their farms
+            $collections = Collection::whereHas('farm', function ($query) use ($user) {
+                $query->where('owner_id', $user->id);
+            })->pluck('id')->toArray();
+        } else {
+            $collections = [];
+        }
+
+        // Retrieve payments for those collections
+        $payments = Payment::whereIn('collection_id', $collections)
+            ->with(['collection.farm', 'collection.picker', 'payment_method'])
+            ->paginate(15);
+
+        return view('payments.index', compact('payments'));
         return view('payments.index', compact('payments'));
     }
 
@@ -26,7 +50,21 @@ class PaymentController extends Controller
      */
     public function create()
     {
-        $collections = Collection::doesntHave('payment')->get();
+        $this->authorize('create', Payment::class);
+        // $collections = Collection::doesntHave('payment')->get();
+        $user = auth()->user();
+        if ($user->role_id === 1) {
+            $collections = Collection::doesntHave('payment')
+                ->with(['farm', 'picker'])
+                ->get();
+        } elseif ($user->role_id == 2) {
+            $collections = Collection::doesntHave('payment')
+                ->whereHas('farm', function ($q) use ($user) {
+                    $q->where('owner_id', $user->id);
+                })
+                ->with(['farm', 'picker'])
+                ->get();
+        }
         $payment_methods = PaymentMethod::all();
         return view('payments.create', compact('collections', 'payment_methods'));
     }
@@ -36,6 +74,7 @@ class PaymentController extends Controller
      */
     public function store(StorePaymentRequest $request)
     {
+        $this->authorize('create', Payment::class);
         $validated = $request->validated();
         $collection = Collection::findOrFail($validated['collection_id']);
         $farm = Farm::findOrFail($collection->farm_id);
@@ -59,7 +98,17 @@ class PaymentController extends Controller
      */
     public function edit(Payment $payment)
     {
-        $collections = Collection::has('payment')->get();
+        $this->authorize('update', $payment);
+        $user = auth()->user();
+        $collection = $payment->collection;
+        $other_collections = Collection::doesntHave('payment')
+            ->when($user->role_id === 2, function ($query) use ($user) {
+            // Only collections on farms owned by this user
+            $query->whereHas('farm', fn($q) => $q->where('owner_id', $user->id));
+        })
+        ->with(['farm', 'picker'])
+        ->get();
+        $collections = collect([$collection])->merge($other_collections);
         $payment_methods = PaymentMethod::all();
         return view('payments.edit', compact('payment', 'collections', 'payment_methods'));
     }
@@ -69,6 +118,7 @@ class PaymentController extends Controller
      */
     public function update(UpdatePaymentRequest $request, Payment $payment)
     {
+        $this->authorize('update', $payment);
         $validatedData = $request->validate([
         'date' => 'required|date',
         'amount' => 'required|numeric|min:0.01',
@@ -95,6 +145,7 @@ class PaymentController extends Controller
      */
     public function destroy(Payment $payment)
     {
+        $this->authorize('delete', $payment);
         $payment->delete();
 
     // Notify the user that the associated collection is now marked as UNPAID.

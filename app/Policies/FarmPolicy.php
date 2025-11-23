@@ -13,7 +13,7 @@ class FarmPolicy
      */
     public function viewAny(User $user): bool
     {
-        return false;
+        return $user != null && $user->role_id !== 3;
     }
 
     /**
@@ -21,7 +21,7 @@ class FarmPolicy
      */
     public function view(User $user, Farm $farm): bool
     {
-        return false;
+        return $user != null && $user->role_id !== 3;
     }
 
     /**
@@ -29,7 +29,7 @@ class FarmPolicy
      */
     public function create(User $user): bool
     {
-        return false;
+        return $user != null && $user->role_id !== 3;
     }
 
     /**
@@ -37,7 +37,7 @@ class FarmPolicy
      */
     public function update(User $user, Farm $farm): bool
     {
-        return false;
+        return $user != null && $user->role_id !== 3;
     }
 
     /**
@@ -45,7 +45,7 @@ class FarmPolicy
      */
     public function delete(User $user, Farm $farm): bool
     {
-        return false;
+        return $user != null && $user->role_id !== 3;
     }
 
     /**

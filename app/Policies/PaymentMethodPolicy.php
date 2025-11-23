@@ -13,7 +13,7 @@ class PaymentMethodPolicy
      */
     public function viewAny(User $user): bool
     {
-        return false;
+        return $user->role_id == 1;
     }
 
     /**
@@ -21,7 +21,7 @@ class PaymentMethodPolicy
      */
     public function view(User $user, PaymentMethod $paymentMethod): bool
     {
-        return false;
+        return $user->role_id == 1;
     }
 
     /**
@@ -29,7 +29,7 @@ class PaymentMethodPolicy
      */
     public function create(User $user): bool
     {
-        return false;
+        return $user->role_id == 1;
     }
 
     /**
@@ -37,7 +37,7 @@ class PaymentMethodPolicy
      */
     public function update(User $user, PaymentMethod $paymentMethod): bool
     {
-        return false;
+        return $user->role_id == 1;
     }
 
     /**
@@ -45,7 +45,7 @@ class PaymentMethodPolicy
      */
     public function delete(User $user, PaymentMethod $paymentMethod): bool
     {
-        return false;
+        return $user->role_id == 1;
     }
 
     /**

@@ -6,11 +6,13 @@
 <div class="container">
     <h1>Collections</h1>
 
-    <div class="card-tools">
+    @can('create', App\Models\Collection::class)
+      <div class="card-tools mb-4">
           <a href="{{ route('collections.create') }}" class="btn btn-primary btn-sm">
             <i class="bi bi-plus-circle"></i> Add New Collection
           </a>
     </div>
+    @endcan
 
     <div class="table-responsive">
           <table class="table">
@@ -32,7 +34,8 @@
                   <td>{{ $collection->farm->name }}</td>
                   <td>{{ $collection->picker->name }}</td>
                   <td>{{ $collection->quantity }}</td>
-                  <td>
+                  @can('update', $collection)
+                    <td>
                     <div class="btn-group" role="group">
                       {{--@can('show', $collection)--}}
                         <a href="{{ route('collections.show', $collection->id) }}" 
@@ -61,7 +64,8 @@
                         </form>
                       {{--@endcan--}}
                     </div>
-                  </td>
+                    </td>
+                  @endcan                  
               </tr>
           @endforeach
           </tbody>

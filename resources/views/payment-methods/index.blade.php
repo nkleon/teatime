@@ -6,7 +6,7 @@
 <div class="container">
     <h1>Payment Methods</h1>
 
-    <div class="card-tools">
+    <div class="card-tools mb-4">
           <a href="{{ route('payment-methods.create') }}" class="btn btn-primary btn-sm">
             <i class="bi bi-plus-circle"></i> Add New Payment Method
           </a>

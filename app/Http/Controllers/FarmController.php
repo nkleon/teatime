@@ -7,16 +7,26 @@ use App\Http\Requests\UpdateFarmRequest;
 use App\Models\Farm;
 use App\Models\Role;
 use App\Models\User;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Validation\Rule;
 
 class FarmController extends Controller
 {
+    use AuthorizesRequests;
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $farms = Farm::paginate(15);
+        $user = auth()->user();
+
+        // Ensure the user can view farms at all
+        $this->authorize('viewAny', Farm::class);
+
+        // Filter farms depending on policy
+        $farms = Farm::when($user->role->id !== 1, function ($query) use ($user) {
+            $query->where('owner_id', $user->id);
+        })->paginate(15);
         return view('farms.index', compact('farms'));
     }
 
@@ -26,7 +36,13 @@ class FarmController extends Controller
     public function create()
     {
         // $ownerRoleId = Role::where('name', 'owner')->value('id');
-        $owners = User::where('role_id', 2)->get();
+        $user = auth()->user();
+        $this->authorize('create', Farm::class);
+        if($user->role_id == 1) {
+            $owners = User::where('role_id', 2)->get();
+        } else {
+            $owners = User::where('id', $user->id)->get();
+        }
         return view('farms.create', compact('owners'));
     }
 
@@ -35,6 +51,7 @@ class FarmController extends Controller
      */
     public function store(StoreFarmRequest $request)
     {
+        $this->authorize('create', Farm::class);
         Farm::create($request->validated());
         return redirect()->route('farms.index')->with('success', 'Farm added');
     }
@@ -52,8 +69,13 @@ class FarmController extends Controller
      */
     public function edit(Farm $farm)
     {
-        $ownerRoleId = Role::where('name', 'owner')->value('id');
-        $owners = User::where('role_id', $ownerRoleId)->get();
+        $user = auth()->user();
+        $this->authorize('update', $farm);
+        if($user->role_id == 1) {
+            $owners = User::where('role_id', 2)->get();
+        } else {
+            $owners = User::where('id', $user->id)->get();
+        }
         return view('farms.edit', compact('farm', 'owners'));
     }
 
@@ -62,6 +84,7 @@ class FarmController extends Controller
      */
     public function update(UpdateFarmRequest $request, Farm $farm)
     {
+        $this->authorize('update', $farm);
       // 1. Validation Logic
     $validatedData = $request->validate([
         'name' => [
@@ -94,7 +117,7 @@ class FarmController extends Controller
     public function destroy(Farm $farm)
     {
        // Authorization check
-    // $this->authorize('delete', $farm);
+    $this->authorize('delete', $farm);
     
     // CRITICAL: Check for dependent records (e.g., collections)
     // If your migrations did NOT set onDelete('cascade') for collections, 

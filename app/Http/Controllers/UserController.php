@@ -6,16 +6,21 @@ use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use App\Models\User;
 use App\Models\Role;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 
 class UserController extends Controller
 {
+    use AuthorizesRequests;
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
+        $this->authorize('viewAny', User::class);
         $users = \App\Models\User::paginate(15);
         return view('users.index', compact('users'));
     }
@@ -25,6 +30,7 @@ class UserController extends Controller
      */
     public function create()
     {
+        $this->authorize('create', User::class);
         $roles = Role::all();
         return view('users.create', compact('roles'));
     }
@@ -34,6 +40,7 @@ class UserController extends Controller
      */
     public function store(StoreUserRequest $request)
     {
+        $this->authorize('create', User::class);
         $validated = $request->validated();
         $validated['password'] = Hash::make(env('DEFAULT_USER_PASSWORD', 'password'));
         User::create($validated);
@@ -53,11 +60,9 @@ class UserController extends Controller
      */
     public function edit(User $user)
     {
+        $this->authorize('update', $user);
         // Load all roles for the dropdown select field
     $roles = Role::all(); 
-
-    // Authorization check (e.g., only admin can access this)
-    // $this->authorize('view', $user); 
 
     return view('users.edit', compact('user', 'roles'));
     }
@@ -68,7 +73,7 @@ class UserController extends Controller
     public function update(UpdateUserRequest $request, User $user)
     {
         // Authorization check
-    // $this->authorize('update', $user); 
+    $this->authorize('update', $user); 
 
     // 1. Validation Logic
     $validatedData = $request->validate([
@@ -125,7 +130,7 @@ class UserController extends Controller
     public function destroy(User $user)
     {
         // Authorization check (highly restricted, usually only by a Super Admin)
-    // $this->authorize('delete', $user);
+    $this->authorize('delete', $user);
     
     // Check for collections linked to this user
     if ($user->collections()->exists()) {
@@ -137,5 +142,78 @@ class UserController extends Controller
 
     return redirect()->route('users.index')
         ->with('success', 'User deleted successfully.');
+    }
+
+    public function login()
+    {
+        return view('auth.login');
+    }
+
+    public function authenticate(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required'
+        ]);
+
+        $credentials = $request->only(['email','password']);
+
+        if(Auth::attempt($credentials)){
+            // typically define a route called dashboard
+            return redirect()->intended('/');
+        }
+
+        return redirect()->route('login')
+            ->withErrors(['general' => "Wrong username and/or password"]);  
+    }
+
+    public function logout(Request $request)
+    {
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        //home page (landing page)
+        return redirect()->to('/');
+    }
+
+    public function register()
+    {
+        $roles = Role::where('id', '!=', '1')->get();
+        return view('auth.register', compact('roles'));
+    }
+
+    public function onboard(Request $request)
+    {
+        $validatedData = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'email' => [
+                'required',
+                'email',
+                'max:255',
+                Rule::unique('users'),
+            ],
+            'phone' => [
+                'required',
+                'string',
+                Rule::unique('users'),
+            ],
+            'role_id' => [
+                'required',
+                'exists:roles,id',
+            ],
+            'password' => ['required', 'string', 'min:8', 'confirmed'],
+        ]);
+
+        // Hash the password
+        $validatedData['password'] = Hash::make($validatedData['password']);
+
+        // Create the user
+        $user = User::create($validatedData);
+
+        // Automatically log the user in
+        Auth::login($user);
+
+        // 5️⃣ Redirect or login
+        return redirect()->intended('/')->with('success', 'Registration successful!.');
     }
 }

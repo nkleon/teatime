@@ -6,11 +6,13 @@
 <div class="container">
     <h1>Payments</h1>
 
-    <div class="card-tools">
+    @can('create', App\Models\Payment::class)
+    <div class="card-tools mb-4">
           <a href="{{ route('payments.create') }}" class="btn btn-primary btn-sm">
             <i class="bi bi-plus-circle"></i> Add New Payment
           </a>
     </div>
+    @endcan
 
     <div class="table-responsive">
         <table class="table">
@@ -32,6 +34,7 @@
                 <td>{{ $payment->collection->date }} - {{ $payment->collection->picker->name }} - {{ $payment->collection->farm->name }}</td>
                 <td>{{ $payment->amount }}</td>
                 <td>{{ $payment->payment_method->name }}</td>
+                @can('update', $payment)
                 <td>
                   <div class="btn-group" role="group">
                     {{--@can('show', $payment)--}}
@@ -62,6 +65,7 @@
                     {{--@endcan--}}
                   </div>
                 </td>
+                @endcan
             </tr>
         @endforeach
         </tbody>

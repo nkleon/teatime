@@ -6,7 +6,7 @@
     <div class="container">
         <h1>Users</h1>
 
-        <div class="card-tools">
+        <div class="card-tools mb-4">
             <a href="{{ route('users.create') }}" class="btn btn-primary btn-sm">
                 <i class="bi bi-plus-circle"></i> Add New User
             </a>
