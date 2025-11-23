@@ -13,7 +13,8 @@ class CollectionController extends Controller
      */
     public function index()
     {
-        //
+        $collections = \App\Models\Collection::paginate(15);
+        return view('collections.index', compact('collections'));
     }
 
     /**
